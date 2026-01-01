@@ -1,0 +1,111 @@
+# Default configuration for Clinical Decision Support System
+
+system:
+  name: "Clinical Decision Support System"
+  version: "1.0.0"
+  description: "Research demo for chronic disease management"
+  disclaimer: "For research purposes only. Not for clinical use."
+
+data:
+  n_patients: 1000
+  test_size: 0.2
+  val_size: 0.2
+  random_state: 42
+  patient_level_split: true
+
+models:
+  xgboost:
+    n_estimators: 100
+    max_depth: 6
+    learning_rate: 0.1
+    random_state: 42
+    subsample: 0.8
+    colsample_bytree: 0.8
+  
+  lightgbm:
+    n_estimators: 100
+    max_depth: 6
+    learning_rate: 0.1
+    random_state: 42
+    subsample: 0.8
+    colsample_bytree: 0.8
+  
+  tabnet:
+    n_d: 64
+    n_a: 64
+    n_steps: 5
+    gamma: 1.5
+    lambda_sparse: 1e-3
+    optimizer_fn: "adam"
+    optimizer_params:
+      lr: 0.02
+    scheduler_params:
+      step_size: 50
+      gamma: 0.9
+    scheduler_fn: "step"
+    mask_type: "entmax"
+
+training:
+  batch_size: 32
+  epochs: 100
+  patience: 10
+  learning_rate: 0.001
+  weight_decay: 1e-4
+  early_stopping: true
+
+evaluation:
+  metrics:
+    - "auc"
+    - "auprc"
+    - "sensitivity"
+    - "specificity"
+    - "ppv"
+    - "npv"
+    - "f1_score"
+    - "brier_score"
+  calibration_bins: 10
+  decision_threshold: 0.5
+  cross_validation_folds: 5
+
+clinical_rules:
+  hypertension:
+    systolic_threshold: 140
+    diastolic_threshold: 90
+  
+  diabetes:
+    glucose_threshold: 126
+    hba1c_threshold: 6.5
+  
+  cardiovascular:
+    cholesterol_threshold: 200
+    bmi_threshold: 30
+  
+  preventive_care:
+    colonoscopy_age: 50
+    mammography_age: 40
+
+risk_thresholds:
+  low: 0.3
+  moderate: 0.5
+  high: 0.7
+  very_high: 0.9
+
+explainability:
+  shap_samples: 100
+  lime_samples: 10
+  max_features_display: 20
+
+uncertainty:
+  monte_carlo_samples: 100
+  confidence_threshold: 0.8
+  uncertainty_threshold: 0.3
+  ood_threshold: -0.5
+
+safety:
+  confidence_threshold: 0.8
+  uncertainty_threshold: 0.3
+  ood_threshold: -0.5
+  min_samples_for_prediction: 10
+
+device: "auto"  # Will be set to CUDA/MPS/CPU automatically
+seed: 42
